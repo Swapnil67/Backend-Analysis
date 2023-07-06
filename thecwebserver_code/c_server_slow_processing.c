@@ -69,15 +69,15 @@ int main()
     }
 
     /*
-     * Read data from the OS receive buffer to the application (buffer)
-     * This is essentially reading the HTTP request
-     * Don't bite more than you chew 'APP_MAX_BUFFER'
+      * Read data from the OS receive buffer to the application (buffer)
+      * This is essentially reading the HTTP request
+      * Don't bite more than you chew 'APP_MAX_BUFFER'
      */
     read(client_fd, buffer, APP_MAX_BUFFER);
     printf("%s\n", buffer);
 
     // * Simulate the slow processing request
-    // * Wait 6 sec and then unblock
+    // * Wait 10 sec and then unblock
     sleep(10);
 
     // * We send the request by writing to the socket send buffer in the OS
@@ -85,11 +85,10 @@ int main()
                           "Content-Type: text/plain\n"
                           "Content-Length: 13\n\n"
                           "Hello World!\n";
-    // * Write to the socket
+    // * Write to the socket (From OS to Send Buffer)
     write(client_fd, http_response, strlen(http_response));
 
     // * Close the client socket (Terminate the TCP Connection)
-
     close(client_fd);
   }
 

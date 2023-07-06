@@ -45,7 +45,8 @@ int main()
 
   // * Creates the queues
   // * Listen for clients, with 10 backlog (10 connections in accept queue)
-  if (listen(server_fd, 10) < 0)
+  // * This defines how many client can server accept in a queue
+  if (listen(server_fd, 1) < 0)
   {
     perror("Listen Failed");
     exit(EXIT_FAILURE);
@@ -62,15 +63,16 @@ int main()
     // * Accept a client connection client_fd == connection
     // * this blocks
     // * If the accept queue is empty, we are stuck here...
-    if ((client_fd = accept(server_fd, (struct sockaddr *)&address, (socklen_t *)&address_len)) < 0) {
+    if ((client_fd = accept(server_fd, (struct sockaddr *)&address, (socklen_t *)&address_len)) < 0)
+    {
       perror("Accept Failed");
       exit(EXIT_FAILURE);
     }
 
     /*
-     * Read data from the OS receive buffer to the application (buffer)
-     * This is essentially reading the HTTP request
-     * Don't bite more than you chew 'APP_MAX_BUFFER'
+      * Read data from the OS receive buffer to the application (buffer)
+      * This is essentially reading the HTTP request
+      * Don't bite more than you chew 'APP_MAX_BUFFER'
      */
     read(client_fd, buffer, APP_MAX_BUFFER);
     printf("%s\n", buffer);
@@ -78,13 +80,14 @@ int main()
     // * We send the request by writing to the socket send buffer in the OS
     char *http_response = "HTTP/1.1 200 OK\n"
                           "Content-Type: text/plain\n"
-                          "Content-Length: 13\n\n"
+                          "Content-Length: 14\n\n"
                           "Hello World!\n";
-    // * Write to the socket
+    // * Write to the socket (From OS to Send Buffer)
     write(client_fd, http_response, strlen(http_response));
 
-    // * Close the client socket (Terminate the TCP Connection)
+    write(client_fd, "!", 1);
 
+    // * Close the client socket (Terminate the TCP Connection)
     close(client_fd);
   }
 
