@@ -7,7 +7,7 @@
 
 // * maximum application buffer
 #define APP_MAX_BUFFER 1024
-#define PORT 8081
+#define PORT 8082
 
 int main()
 {
